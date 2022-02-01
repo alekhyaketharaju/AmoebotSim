@@ -391,7 +391,7 @@ BallroomDemoSystem::BallroomDemoSystem(unsigned int numParticles) {
 	Node leaderNode(x, y);
 	numParticlesAdded++;
 	BallroomDemoParticle* leader =
-		new BallroomDemoParticle(leaderNode, -1, randDir(), *this,
+		new BallroomDemoParticle(leaderNode, -1, 0, *this,
 			BallroomDemoParticle::State::Leader);
 	insert(leader);
 	leader->_partnerHead = -1;
@@ -407,7 +407,7 @@ BallroomDemoSystem::BallroomDemoSystem(unsigned int numParticles) {
 		//occupied.back()->_partnerTail = followerDir;
 		Node followerNode = prev.nodeInDir(followerDir);
 		BallroomDemoParticle* follower =
-			new BallroomDemoParticle(followerNode, -1, randDir(), *this,
+			new BallroomDemoParticle(followerNode, -1, 0, *this,
 				BallroomDemoParticle::State::Follower);
 		follower->_partnerHead = follower->globalToLocalDir((followerDir + 3) % 6);
 		if (numParticles - numParticlesAdded == 1) {

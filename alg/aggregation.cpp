@@ -1,5 +1,5 @@
 #include <QDebug>
-
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <unordered_set>
 
@@ -146,7 +146,7 @@ AggregateSystem::AggregateSystem(int numParticles, QString mode,
   _measures.push_back(new DispersionMeasure("Dispersion", 1, *this));
   _measures.push_back(new ClusterFractionMeasure("Cluster Fraction", 1, *this));
 
-  Q_ASSERT(mode == "d" or mode == "e");
+  Q_ASSERT(mode == "d" || mode == "e");
   Q_ASSERT(noiseVal >= 0);
   Q_ASSERT(numParticles > 0);
   std::set<Node> occupied;
