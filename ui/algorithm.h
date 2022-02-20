@@ -59,6 +59,18 @@ class DiscoDemoAlg : public Algorithm {
   void instantiate(const int numParticles = 30, const int counterMax = 5);
 };
 
+
+// Caterpillar_1_Algorithm
+class Caterpillar1Alg : public Algorithm {
+	Q_OBJECT
+
+public:
+	Caterpillar1Alg();
+
+public slots:
+	void instantiate(const int numParticles = 30, const int counterMax = 5);
+};
+
 // Demo: Metrics.
 class MetricsDemoAlg : public Algorithm {
   Q_OBJECT
