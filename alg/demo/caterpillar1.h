@@ -63,17 +63,20 @@ class Caterpillar1Particle : public AmoebotParticle {
 		int isPointedByNextNode(std::vector<int> next, int x, int y) const;
 		std::vector<int> Caterpillar1Particle::getNodeFromLabel(int x, int y, int label) const;
 		bool Caterpillar1Particle::checkIfNodeIsNbr(int x1, int y1, int x2, int y2) const;
+		int Caterpillar1Particle::getLabelFromNode(int x_current, int y_current, int x_pre, int y_pre) const;
 
 	protected:
 		// Returns a random Color.
 		Color getRandColor() const;
 		Color getLeaderColor() const;
 		Color getRootColor() const;
-		int rotate();
+		Color getColor(State state) const;
+		void rotate();
 
 		// Member variables.
 		State _state;
 		Color _color;
+		int _name;
 		int _followingBondedNbr;
 		int _precedingBondedNbr;
 		int _rotate_status_head; //-1 - do nothing, 1 - init rotate, 2 - Ack, 3 - Completed rotate
