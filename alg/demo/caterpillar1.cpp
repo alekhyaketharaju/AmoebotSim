@@ -103,7 +103,7 @@ void Caterpillar1Particle::activate() {
 		
 		else if (isPointedByFirstNode(_firstNode, head.x, head.y) != -1 && layer>1) {
 			qDebug() << "----------root - pointed by FirstNodei where i>1" << endl;
-			next_node_to_insert = getNodeFromLabel(head.x, head.y, 1);
+			next_node_to_insert = getNodeFromLabel(head.x, head.y, 2);
 			_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], 2 });
 
 			next_node_to_insert = getNodeFromLabel(head.x, head.y, 5);
@@ -182,6 +182,7 @@ void Caterpillar1Particle::activate() {
 	else if (_state == State::Retired) {
 		_color = getColor(_state);
 		qDebug() << "Retired state = " << _name << endl;
+		qDebug() << "_precedingBondedNbr == -1: " << (_precedingBondedNbr == -1) << " (_followingBondedNbr): " << _followingBondedNbr << endl;
 		if (_precedingBondedNbr == -1 && hasNbrAtLabel(_followingBondedNbr)) {
 			qDebug() << "Tail particle retired, sending terminate" << endl;
 			nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
@@ -287,12 +288,12 @@ bool Caterpillar1Particle::checkIfNodeIsNbr(int x1, int y1, int x2, int y2) cons
 
 
 int Caterpillar1Particle::labelPointing(std::vector<std::vector<int>> nextNode, std::vector<std::vector<int>> directionNode, int x, int y) const {
-	for (int i = 0; i < directionNode.size(); i++) {
+	for (int i = directionNode.size() - 1; i >= 0; i--) {
 		if (directionNode[i][0] == x && directionNode[i][1] == y)
 			return directionNode[i][2]; //label pointing
 	}
 
-	for (int i = 0; i < nextNode.size(); i++) {
+	for (int i = nextNode.size() - 1; i >= 0; i--) {
 		if (nextNode[i][0] == x && nextNode[i][1] == y)
 			return nextNode[i][2]; //label pointing
 	}
@@ -465,7 +466,7 @@ void Caterpillar1Particle::rotate() {
 						qDebug() << "Position of " << _name << " is " << head.x << ", " << head.y << endl;
 						qDebug() << "Nexts: " << _nextOne << " and " << _nextTwo << endl;
 						nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir;
-
+						_followingBondedNbr = (_new_dir + 3) % 6;
 
 
 					}
@@ -481,6 +482,7 @@ void Caterpillar1Particle::rotate() {
 								nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir; //right particle pBN changes
 							_precedingBondedNbr = getLabelFromNode(head.x, head.y, pBN[0], pBN[1]);
 							nbrAtLabel(_precedingBondedNbr)._followingBondedNbr = (_precedingBondedNbr + 3) % 6;
+							_followingBondedNbr = (_new_dir + 3) % 6;
 						}
 						else {
 
@@ -537,10 +539,10 @@ void Caterpillar1Particle::rotate() {
 							//if (canPull(labelToPull))
 								//pull(labelToPull);
 							nbrAtLabel(_precedingBondedNbr)._followingBondedNbr = (_precedingBondedNbr + 3) % 6;
-							if (hasNbrAtLabel(_followingBondedNbr))
+							if (hasNbrAtLabel(_followingBondedNbr)) {
 								nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir;
-
-
+								_followingBondedNbr = (_new_dir + 3) % 6;
+							}
 							Caterpillar1Particle *temp = &nbrAtLabel(_precedingBondedNbr);
 
 							while ((temp->_precedingBondedNbr) != -1) {
@@ -624,8 +626,9 @@ void Caterpillar1Particle::rotate() {
 
 							}
 							qDebug() << "Pull stops at " << temp->_name << endl;
-							if (temp->isExpanded())
+							if (temp->isExpanded()) {
 								temp->contractTail();
+							}
 						}
 
 					}
@@ -738,6 +741,7 @@ void Caterpillar1Particle::rotate() {
 				if (_precedingBondedNbr == -1) {
 
 					contractTail();
+					_followingBondedNbr = (_new_dir + 3) % 6;
 					qDebug() << "after contracting Following bonded nbr = " << hasNbrAtLabel(_followingBondedNbr) << endl;
 					nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir;
 
@@ -757,6 +761,7 @@ void Caterpillar1Particle::rotate() {
 							nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir; //right particle pBN changes
 						_precedingBondedNbr = getLabelFromNode(head.x, head.y, pBN[0], pBN[1]);
 						nbrAtLabel(_precedingBondedNbr)._followingBondedNbr = (_precedingBondedNbr + 3) % 6;
+						_followingBondedNbr = (_new_dir + 3) % 6;
 					}
 					else {
 
