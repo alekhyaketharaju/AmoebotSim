@@ -126,11 +126,22 @@ void Caterpillar1Particle::activate() {
 				
 				qDebug() << "Label = " << label << endl;
 				qDebug() << "hasNbrAtLabel(label): " << hasNbrAtLabel(label) << endl;
+				if (label == _precedingBondedNbr) {
+					int a = (label + 1) % 6;
+					int b = label == 0 ? 5 : label - 1;
+					qDebug() << "a, b = " << a << ", " << b << endl;
+					if ((hasNbrAtLabel(a) && (nbrAtLabel(a)._state == State::Retired || nbrAtLabel(a)._state == State::Leader) && a != _followingBondedNbr) || (hasNbrAtLabel(b) && (nbrAtLabel(b)._state == State::Retired || nbrAtLabel(b)._state == State::Leader) && b != _followingBondedNbr)) {
+						next_node_to_insert = getNodeFromLabel(head.x, head.y, label);
+						_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], label });
+						break;
+					}
+				}
+
 				if (!hasNbrAtLabel(label) && _precedingBondedNbr!=-1) {
 					int a = (label + 1) % 6;
 					int b = label == 0 ? 5 : label - 1;
 					qDebug() << "a, b = " << a << ", " << b << endl;
-					if ((hasNbrAtLabel(a) && (nbrAtLabel(a)._state == State::Retired || nbrAtLabel(a)._state == State::Leader) && a != _precedingBondedNbr && a != _followingBondedNbr) || (hasNbrAtLabel(b) && (nbrAtLabel(b)._state == State::Retired || nbrAtLabel(b)._state == State::Leader) && b != _precedingBondedNbr && b != _followingBondedNbr)) {
+					if ((hasNbrAtLabel(a) && (nbrAtLabel(a)._state == State::Retired || nbrAtLabel(a)._state == State::Leader) && a != _followingBondedNbr) || (hasNbrAtLabel(b) && (nbrAtLabel(b)._state == State::Retired || nbrAtLabel(b)._state == State::Leader) && b != _followingBondedNbr)) {
 						next_node_to_insert = getNodeFromLabel(head.x, head.y, label);
 						_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], label });
 						break;
