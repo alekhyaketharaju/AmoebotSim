@@ -28,7 +28,7 @@ class Caterpillar1Particle : public AmoebotParticle {
 			Yellow, //root
 			Green, //follower
 			Blue, //retired
-			Indigo //terminated
+			Black //terminated
 		};
 
 		// Constructs a new particle with a node position for its head, a global
@@ -60,7 +60,8 @@ class Caterpillar1Particle : public AmoebotParticle {
 		// hasNbrAtLabel() first if unsure.
 		Caterpillar1Particle& nbrAtLabel(int label) const;
 		int isPointedByFirstNode(std::vector<std::vector<int>> firstNode, int x, int y) const;
-		int isPointedByNextNode(std::vector<int> next, int x, int y) const;
+		int isPointedByNextNode(std::vector<std::vector<int>> nextNode, int x, int y) const;
+		int labelPointing(std::vector<std::vector<int>> nextNode, std::vector<std::vector<int>> directionNode, int x, int y) const;
 		std::vector<int> Caterpillar1Particle::getNodeFromLabel(int x, int y, int label) const;
 		bool Caterpillar1Particle::checkIfNodeIsNbr(int x1, int y1, int x2, int y2) const;
 		int Caterpillar1Particle::getLabelFromNode(int x_current, int y_current, int x_pre, int y_pre) const;
