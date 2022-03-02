@@ -212,6 +212,10 @@ void Caterpillar1Particle::activate() {
 	}
 	//--------------------- TERMINATED STATE ---------------------
 	else if (_state == State::Terminated) {
+		layer = 1;
+		_firstNode.clear();
+		_nextNodes.clear();
+
 		_color = getColor(_state);
 		//qDebug() << "Terminated state = " << _name << endl;
 	}
@@ -293,10 +297,12 @@ int Caterpillar1Particle::getLabelFromNode(int x_current, int y_current, int x_p
 }
 
 bool Caterpillar1Particle::checkIfNodeIsNbr(int x1, int y1, int x2, int y2) const {
-	if (abs(x1 - x2) > 1 || abs(y1 - y1) > 1) {
-		return false;
+
+	if ((x1 == x2 && abs(y1 - y2) == 1) || (y1 == y2 && abs(x1 - x2) == 1) || (x1 - x2 == 1 && y1 - y2 == -1) || (x1 - x2 == -1 && y1 - y2 == 1)) {
+		return true;
 	}
-	return true;
+	return false;
+
 }
 
 

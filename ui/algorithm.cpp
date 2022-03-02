@@ -4,6 +4,9 @@
 
 #include "ui/algorithm.h"
 #include "alg/demo/caterpillar1.h"
+
+#include "alg/demo/caterpillar2.h"
+
 #include "alg/demo/ballroomdemo.h"
 #include "alg/demo/discodemo.h"
 #include "alg/demo/dynamicdemo.h"
@@ -91,6 +94,23 @@ void Caterpillar1Alg::instantiate(const int numParticles, const int counterMax) 
 	}
 }
 
+
+Caterpillar2Alg::Caterpillar2Alg() : Algorithm("Caterpillar 2 Algorithm", "caterpillar2") {
+	addParameter("# Particles", "30");
+	addParameter("Counter Max", "5");
+};
+
+void Caterpillar2Alg::instantiate(const int numParticles, const int counterMax) {
+	if (numParticles <= 0) {
+		emit log("# particles must be > 0", true);
+	}
+	else if (counterMax <= 0) {
+		emit log("counterMax must be > 0", true);
+	}
+	else {
+		emit setSystem(std::make_shared<Caterpillar2System>(numParticles));
+	}
+}
 
 MetricsDemoAlg::MetricsDemoAlg() : Algorithm("Demo: Metrics", "metricsdemo") {
   addParameter("# Particles", "30");
@@ -323,6 +343,8 @@ AlgorithmList::AlgorithmList() {
   // Demo algorithms.
   _algorithms.push_back(new DiscoDemoAlg());
   _algorithms.push_back(new Caterpillar1Alg());
+  _algorithms.push_back(new Caterpillar2Alg());
+
   _algorithms.push_back(new MetricsDemoAlg());
   _algorithms.push_back(new BallroomDemoAlg());
   _algorithms.push_back(new TokenDemoAlg());
