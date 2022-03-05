@@ -76,9 +76,10 @@ protected:
 	int _precedingBondedNbr;
 	int _rotate_status_head; //-1 - do nothing, 1 - init rotate, 2 - Ack, 3 - Completed rotate
 	int _rotate_status_tail;
-	int _receive_head; //initially -1, root activation - 0, init rotate - 1, Ack - 2, Completed rotate - 3
+	
+	int _receive_head; 
 
-	int _receive_tail; // initially -1, terminate - 0
+	int _receive_tail; 
 private:
 	friend class Caterpillar2System;
 };

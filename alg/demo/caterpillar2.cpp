@@ -39,12 +39,15 @@ void Caterpillar2Particle::activate() {
 		first_node_to_insert2 = getNodeFromLabel(head.x, head.y, 3);
 		_firstNode2.push_back({ first_node_to_insert2[0], first_node_to_insert2[1], 3 });
 		if (hasNbrAtLabel(_precedingBondedNbr)) {
-			
+
 			nbrAtLabel(_precedingBondedNbr)._receive_head = 0; //root activation
 		}
 
-		if (_receive_tail == 0) //receives terminate
+		if (_receive_tail == 0){ //receives terminate{
 			_state = State::Terminated;
+			_color = getColor(_state);
+		}
+
 	}
 
 	//--------------------- ROOT STATE ---------------------
@@ -64,7 +67,7 @@ void Caterpillar2Particle::activate() {
 		//Not pointed by first node or next
 		if (isPointedByFirstNode(_firstNode2, head.x, head.y) == -1 && isPointedByNextNode(_nextNodes2, head.x, head.y) == 0) {
 			qDebug() << "1" << endl;
-			while (isPointedByFirstNode(_firstNode2, head.x, head.y) == -1 && isPointedByNextNode(_nextNodes2, head.x, head.y) == 0) {
+			if (isPointedByFirstNode(_firstNode2, head.x, head.y) == -1 && isPointedByNextNode(_nextNodes2, head.x, head.y) == 0) {
 				//qDebug() << "1" << endl;
 
 				rotate();
@@ -132,6 +135,7 @@ void Caterpillar2Particle::activate() {
 				//nbrAtLabel(_precedingBondedNbr)._state = State::Root;
 			}
 			_state = State::Retired;
+			_color = getColor(_state);
 		}
 
 	}
@@ -143,6 +147,7 @@ void Caterpillar2Particle::activate() {
 		if (_receive_head == 0) {
 			qDebug() << "Follower " << _name << " becoming root" << endl;
 			_state = State::Root;
+			_color = getColor(_state);
 		}
 	}
 
@@ -155,6 +160,7 @@ void Caterpillar2Particle::activate() {
 			//qDebug() << "Tail particle retired, sending terminate" << endl;
 			nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
 			_state = State::Terminated;
+			_color = getColor(_state);
 		}
 
 		if (_receive_tail == 0) {
@@ -164,6 +170,7 @@ void Caterpillar2Particle::activate() {
 				
 			}
 			_state = State::Terminated;
+			_color = getColor(_state);
 		}
 	}
 	//--------------------- TERMINATED STATE ---------------------
@@ -473,7 +480,7 @@ void Caterpillar2Particle::rotate() {
 		}
 
 	}
-	
+	return;
 	
 }
 

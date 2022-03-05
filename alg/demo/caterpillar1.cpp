@@ -40,15 +40,13 @@ void Caterpillar1Particle::activate() {
 		first_node_to_insert = getNodeFromLabel(head.x, head.y, 3);
 		_firstNode.push_back({ first_node_to_insert[0], first_node_to_insert[1], 3 });
 		if (hasNbrAtLabel(_precedingBondedNbr)) {
-			//qDebug() << "Root is x,y=" << endl;
-			//qDebug() << nbrAtLabel(_precedingBondedNbr).head.x << endl;
-			//qDebug() << nbrAtLabel(_precedingBondedNbr).head.y << endl;
+			
 			nbrAtLabel(_precedingBondedNbr)._receive_head = 0; //root activation
-			//nbrAtLabel(_precedingBondedNbr)._state = State::Root;
 		}
 
 		if (_receive_tail == 0) //receives terminate
 			_state = State::Terminated;
+		_color = getColor(_state);
 	}
 
 	//--------------------- ROOT STATE ---------------------
@@ -59,41 +57,27 @@ void Caterpillar1Particle::activate() {
 
 		_color = getColor(_state);
 
-		//pointed by FirstNode1
-		//qDebug() << "x,y= " << endl;
-		//qDebug() << head.x << endl;
-		//qDebug() <<head.y << endl;
-		//qDebug() << _firstNode << endl;
-		//qDebug() << "Pointed by first node o/p = " << endl;
-
-		//qDebug() << isPointedByFirstNode(_firstNode, head.x, head.y) << endl;
-		//qDebug() << "Layer number = " << layer << endl;
 		if (isPointedByFirstNode(_firstNode, head.x, head.y) != -1 && layer == 1) {
 			//qDebug() << "----------root - pointed by FirstNode1" << endl;
 			next_node_to_insert = getNodeFromLabel(head.x, head.y, 2);
 
 			_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], 2});
-			//_nextOne = { 1, head.x, head.y, 2 };
-			//_nextTwo = { 1, head.x, head.y, 5 };
+			
 
 			_receive_head = 1; //init rotate
 			rotate();
-			//qDebug() << "one rotate complete" << endl;
-			//qDebug() << "next nodes: " << _nextNodes << endl;
-			//qDebug() << "dir nodes: " << _directionNodes << endl;
+			
 
 			_nextNodes.clear();
 			_directionNodes.clear();
-			//qDebug() << "after clearing, next nodes: " << _nextNodes << endl;
-			//qDebug() << "after clearing, dir nodes: " << _directionNodes << endl;
+			
 			next_node_to_insert = getNodeFromLabel(head.x, head.y, 1);
 			_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], 1});
 
 			next_node_to_insert = getNodeFromLabel(head.x, head.y, 5);
 			_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], 5});
 
-			//_nextOne = { 1, head.x, head.y, 1 };
-			//_nextTwo = { 1, head.x, head.y, 5 };
+			
 			_receive_head = 1; //init rotate
 			rotate();
 			_directionNodes.clear();
@@ -110,8 +94,7 @@ void Caterpillar1Particle::activate() {
 			next_node_to_insert = getNodeFromLabel(head.x, head.y, 5);
 			_nextNodes.push_back({ next_node_to_insert[0], next_node_to_insert[1], 5 });
 
-			//_nextOne = { isPointedByFirstNode(_firstNode, head.x, head.y), head.x, head.y, 2 };
-			//_nextTwo = { isPointedByFirstNode(_firstNode, head.x, head.y), head.x, head.y, 5 };
+			
 
 			_receive_head = 1;
 			rotate();
@@ -125,8 +108,7 @@ void Caterpillar1Particle::activate() {
 			
 			for (int label = 0; label <=5; label++) {
 				
-				//qDebug() << "Label = " << label << endl;
-				//qDebug() << "hasNbrAtLabel(label): " << hasNbrAtLabel(label) << endl;
+				
 				if (label == _precedingBondedNbr) {
 					int a = (label + 1) % 6;
 					int b = label == 0 ? 5 : label - 1;
@@ -161,12 +143,10 @@ void Caterpillar1Particle::activate() {
 		}
 		//pointed by two Nexti
 		else {
-			//qDebug() << "----------root - pointed by two next i" << endl;
-			//int pointed = isPointedByNextNode(_nextOne, head.x, head.y);
+			
 			_firstNode.clear();
 			first_node_to_insert = getNodeFromLabel(head.x, head.y, 3);
 			_firstNode.push_back({ first_node_to_insert[0], first_node_to_insert[1], 3 });
-			//_firstNode.push_back({ (layer + 1) % 4, head.x, head.y, 3 });
 			layer = (layer + 1);
 			_nextNodes.clear();
 		}
@@ -178,7 +158,7 @@ void Caterpillar1Particle::activate() {
 			//nbrAtLabel(_precedingBondedNbr)._state = State::Root;
 		}
 		_state = State::Retired;
-
+		_color = getColor(_state);
 
 	}
 
@@ -188,26 +168,26 @@ void Caterpillar1Particle::activate() {
 		if (_receive_head == 0) {
 			//qDebug() << "Follower " << _name << " becoming root" << endl;
 			_state = State::Root;
+			_color = getColor(_state);
 		}
 	}
 
 	//--------------------- RETIRED STATE ---------------------
 	else if (_state == State::Retired) {
 		_color = getColor(_state);
-		//qDebug() << "Retired state = " << _name << endl;
-		//qDebug() << "_precedingBondedNbr == -1: " << (_precedingBondedNbr == -1) << " (_followingBondedNbr): " << _followingBondedNbr << endl;
 		if (_precedingBondedNbr == -1 && hasNbrAtLabel(_followingBondedNbr)) {
 			//qDebug() << "Tail particle retired, sending terminate" << endl;
 			nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
 			_state = State::Terminated;
+			_color = getColor(_state);
 		}
 
 		if (_receive_tail == 0) {
-			//qDebug() << "Received termination, forwarding to following bonded nbr" << endl;
 			if (hasNbrAtLabel(_followingBondedNbr)) {
 				nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
 			}
 			_state = State::Terminated;
+			_color = getColor(_state);
 		}
 	}
 	//--------------------- TERMINATED STATE ---------------------
@@ -217,7 +197,6 @@ void Caterpillar1Particle::activate() {
 		_nextNodes.clear();
 
 		_color = getColor(_state);
-		//qDebug() << "Terminated state = " << _name << endl;
 	}
 
 }
