@@ -81,6 +81,17 @@ public slots:
 	void instantiate(const int numParticles = 30, const int counterMax = 5);
 };
 
+class Caterpillar3Alg : public Algorithm {
+	Q_OBJECT
+
+public:
+	Caterpillar3Alg();
+
+public slots:
+	void instantiate(const int numParticles = 30, const int counterMax = 5);
+};
+
+
 // Demo: Metrics.
 class MetricsDemoAlg : public Algorithm {
   Q_OBJECT

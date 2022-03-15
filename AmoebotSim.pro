@@ -12,6 +12,7 @@ HEADERS += \
     alg/demo/ballroomdemo.h \
     alg/demo/caterpillar1.h \
     alg/demo/caterpillar2.h \
+    alg/demo/caterpillar3.h \
     alg/demo/discodemo.h \
     alg/demo/dynamicdemo.h \
     alg/demo/metricsdemo.h \
@@ -46,6 +47,7 @@ SOURCES += \
     alg/demo/ballroomdemo.cpp \
     alg/demo/caterpillar1.cpp \
     alg/demo/caterpillar2.cpp \
+    alg/demo/caterpillar3.cpp \
     alg/demo/discodemo.cpp \
     alg/demo/dynamicdemo.cpp \
     alg/demo/metricsdemo.cpp \

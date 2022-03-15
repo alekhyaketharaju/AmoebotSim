@@ -86,6 +86,10 @@ void ParameterListModel::createSystem(QString algName) {
 	  dynamic_cast<Caterpillar2Alg*>(alg)->
 		  instantiate(params[0].toInt(), params[1].toInt());
   }
+  else if (signature == "caterpillar3") {
+	  dynamic_cast<Caterpillar3Alg*>(alg)->
+		  instantiate(params[0].toInt(), params[1].toInt());
+  }
   else if (signature == "metricsdemo") {
     dynamic_cast<MetricsDemoAlg*>(alg)->
         instantiate(params[0].toInt(), params[1].toInt());
