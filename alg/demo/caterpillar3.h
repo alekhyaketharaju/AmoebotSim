@@ -72,6 +72,7 @@ class Caterpillar3Particle : public AmoebotParticle {
         Color getColor(State state) const;
         void zigzag(int _dir);
         bool checkForCornerNode();
+		bool checkForNumber(std::vector<int> v, int x);
 
         // Member variables.
         State _state;
