@@ -67,10 +67,7 @@ class Caterpillar1Particle : public AmoebotParticle {
 		int Caterpillar1Particle::getLabelFromNode(int x_current, int y_current, int x_pre, int y_pre) const;
 
 	protected:
-		// Returns a random Color.
-		Color getRandColor() const;
-		Color getLeaderColor() const;
-		Color getRootColor() const;
+		
 		Color getColor(State state) const;
 		void rotate();
 
@@ -80,11 +77,8 @@ class Caterpillar1Particle : public AmoebotParticle {
 		int _name;
 		int _followingBondedNbr;
 		int _precedingBondedNbr;
-		int _rotate_status_head; //-1 - do nothing, 1 - init rotate, 2 - Ack, 3 - Completed rotate
-		int _rotate_status_tail;
-		int _receive_head; //initially -1, root activation - 0, init rotate - 1, Ack - 2, Completed rotate - 3
-
-		int _receive_tail; // initially -1, terminate - 0
+		int _receive_msg; // initially = -1, root activation = 0, init_rotate = 1, Ack = 2, Completed rotate = 3, terminate = 4 
+		
 	private:
 		friend class Caterpillar1System;
 };

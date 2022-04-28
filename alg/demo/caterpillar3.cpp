@@ -29,20 +29,20 @@ void Caterpillar3Particle::activate() {
         //qDebug() << "----------LEaDER = " << _name << endl;
         _color = getColor(_state);
         if(initialization == 1){
-            qDebug() << "init: " << initialization << endl;
+            //qDebug() << "init: " << initialization << endl;
             //qDebug() << "dir to move size: " << dirToMove.size() << endl;
             //qDebug() << "dir to move size: " << dirToMove << endl;
 
             if (dirToMove.size() != 0) {
                 zigzag(dirToMove[0]);
                 dirToMove.erase(dirToMove.begin());
-                qDebug() << "dir to move: " << dirToMove << endl;
+                //qDebug() << "dir to move: " << dirToMove << endl;
 
             }
             else {
                 dirToMove = { 1, 0, 4, 4, 0, 1 };
                 initialization = -1;
-                qDebug() << "dir to move: " << dirToMove << endl;
+                //qDebug() << "dir to move: " << dirToMove << endl;
 				cornerNodes.clear();
 				Caterpillar3Particle *temp = &nbrAtLabel(_precedingBondedNbr);
 				while (temp->_precedingBondedNbr!=-1 && cornerNodes.size() < 5) {
@@ -51,14 +51,14 @@ void Caterpillar3Particle::activate() {
 					temp = &temp->nbrAtLabel(temp->_precedingBondedNbr);
 				}
 				nbrAtLabel(_precedingBondedNbr)._receive_msg = 3; //round anymore?
-				qDebug() << "Corner nodes: " << cornerNodes << endl;
+				//qDebug() << "Corner nodes: " << cornerNodes << endl;
             }
         }
 
         else if (_receive_msg == 1) {
 			//_receive_msg = -1;
 			initialization = 0;
-			qDebug() << "dirTozigzag: " << dirTozigzag << endl;
+			//qDebug() << "dirTozigzag: " << dirTozigzag << endl;
             if (dirTozigzag.size() > 3) {
                 zigzag(dirTozigzag[0]);
 				dirTozigzag.erase(dirTozigzag.begin());
@@ -79,7 +79,7 @@ void Caterpillar3Particle::activate() {
 			}
 			else if (dirTozigzag.size() != 0 && dirTozigzag[0] == 1) {
 				if (nbrAtLabel(3).hasNbrAtLabel(1) && nbrAtLabel(3).nbrAtLabel(1).hasNbrAtLabel(1)) {
-					qDebug() << "nbrAtLabel(3).hasNbrAtLabel(1)" << endl;
+					//qDebug() << "nbrAtLabel(3).hasNbrAtLabel(1)" << endl;
 					zigzag(1);
 				}
 				else {
@@ -98,17 +98,22 @@ void Caterpillar3Particle::activate() {
 					temp = &temp->nbrAtLabel(temp->_precedingBondedNbr);
 				}
 				nbrAtLabel(_precedingBondedNbr)._receive_msg = 3; //round anymore?
-				qDebug() << "Corner nodes: " << cornerNodes << endl;
+				//qDebug() << "Corner nodes: " << cornerNodes << endl;
 
             }
         }
 
         //nbrAtLabel(_precedingBondedNbr)._receive_msg = 3; //round anymore?
 
-        if (_receive_msg == 0) //receives terminate
-			//_receive_msg = -1;
-			
-            _state = State::Terminated;
+		if (_receive_msg == 0) { //receives terminate
+			_receive_msg = -1;
+			initialization = 1;
+			dirToMove = { 1, 0, 4, 4, 0, 1 };
+			dirTozigzag = { 1, 1, 5, 4, 0, 1 };
+			_receive_msg = -1;
+			count2 = { 0,1,3,5 };
+			_state = State::Terminated;
+		}
 		_color = getColor(_state);
     }
 
@@ -117,9 +122,9 @@ void Caterpillar3Particle::activate() {
     else if (_state == State::Follower && initialization==-1) {
         _color = getColor(_state);
         if (_receive_msg == 3) { //received round anymore?
-			qDebug() << "Particle " << _name << "received the msg: " << _receive_msg << endl;
-			qDebug() << "_precedingBondedNbr: " << _precedingBondedNbr << endl;
-			qDebug() << "_followingBondedNbr: " << _followingBondedNbr << endl;
+			//qDebug() << "Particle " << _name << "received the msg: " << _receive_msg << endl;
+			//qDebug() << "_precedingBondedNbr: " << _precedingBondedNbr << endl;
+			//qDebug() << "_followingBondedNbr: " << _followingBondedNbr << endl;
 			//qDebug() << "nbrAtLabel(3)._followingBondedNbr: " << nbrAtLabel(3)._followingBondedNbr << endl;
 			//qDebug() << "nbrAtLabel(3)._precedingBondedNbr: " << nbrAtLabel(3)._precedingBondedNbr << endl;
 			//qDebug() << "nbrAtLabel(0)._precedingBondedNbr: " << nbrAtLabel(0)._precedingBondedNbr << endl;
@@ -132,7 +137,7 @@ void Caterpillar3Particle::activate() {
 				( (nbrAtLabel(3)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(3), nbrAtLabel(3)._followingBondedNbr)) || 
 					(nbrAtLabel(3)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(3), nbrAtLabel(3)._precedingBondedNbr))))) &&
 				hasNbrAtLabel(0) && (pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._followingBondedNbr) || pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._precedingBondedNbr))){
-				qDebug() << "Ack being sent to semi retired bonded nbr from " << _name << endl;
+				//qDebug() << "Ack being sent to semi retired bonded nbr from " << _name << endl;
                 if (_followingBondedNbr != -1 && nbrAtLabel(_followingBondedNbr)._state == State::SemiRetired)
                     nbrAtLabel(_followingBondedNbr)._receive_msg = 1;
                 else if (_precedingBondedNbr != -1 && nbrAtLabel(_precedingBondedNbr)._state == State::SemiRetired)
@@ -142,14 +147,14 @@ void Caterpillar3Particle::activate() {
             else {
 				
                 if (_precedingBondedNbr != -1) {
-					qDebug() << "Forwarding round anymore to preceding bonded nbr from " << _name << endl;
+					//qDebug() << "Forwarding round anymore to preceding bonded nbr from " << _name << endl;
                     nbrAtLabel(_precedingBondedNbr)._receive_msg = 3;
                     _state = State::SemiRetired;
 					_color = getColor(_state);
 
                 }
                 else {
-					qDebug() << "Sending terminate from " << _name << endl;
+					//qDebug() << "Sending terminate from " << _name << endl;
                     nbrAtLabel(_followingBondedNbr)._receive_msg = 0;
                     _state = State::Terminated;
 					_color = getColor(_state);
@@ -160,7 +165,7 @@ void Caterpillar3Particle::activate() {
         }
 
         if (_receive_msg == 4) {//p10
-			qDebug() << "received p10 at " << _name << endl;
+			//qDebug() << "received p10 at " << _name << endl;
 			_receive_msg = -1;
 
 			zigzag(1);
@@ -172,7 +177,7 @@ void Caterpillar3Particle::activate() {
         }
 
         if (_receive_msg == 5) {//p10p1
-			qDebug() << "received p10p1 at " << _name << endl;
+			//qDebug() << "received p10p1 at " << _name << endl;
 
 			_receive_msg = -1;
 
@@ -186,7 +191,7 @@ void Caterpillar3Particle::activate() {
 
         if (_receive_msg == 6) {//p1
 			_receive_msg = -1;
-			qDebug() << "received p1 at " << _name << endl;
+			//qDebug() << "received p1 at " << _name << endl;
 
             zigzag(1);
             if (hasNbrAtLabel(_followingBondedNbr)) {
@@ -196,7 +201,7 @@ void Caterpillar3Particle::activate() {
         }
 
         if (_receive_msg == 7) {//p4
-			qDebug() << "received p4 at " << _name << endl;
+			//qDebug() << "received p4 at " << _name << endl;
 
 			_receive_msg = -1;
 
@@ -208,7 +213,7 @@ void Caterpillar3Particle::activate() {
         }
 
         if (_receive_msg == 2) {
-			qDebug() << "received complete at " << _name << endl;
+			//qDebug() << "received complete at " << _name << endl;
 
 			_receive_msg = -1;
 
@@ -223,8 +228,8 @@ void Caterpillar3Particle::activate() {
 		//qDebug() << "Recived msg: " << _receive_msg << endl;
 		if (_receive_msg == 1) {
 			_receive_msg = -1;
-			qDebug() << "Received Ack at " << _name << endl;
-			qDebug() << "checkForCornerNode(): " << checkForNumber(cornerNodes, _name) << endl;
+			//qDebug() << "Received Ack at " << _name << endl;
+			//qDebug() << "checkForCornerNode(): " << checkForNumber(cornerNodes, _name) << endl;
 			//qDebug() << hasNbrAtLabel(4) << endl;
 			//qDebug() << nbrAtLabel(4)._state << endl;
 			//qDebug() << hasNbrAtLabel(0) << endl;
@@ -238,7 +243,7 @@ void Caterpillar3Particle::activate() {
 				&& hasNbrAtLabel(0) && nbrAtLabel(0)._state == State::SemiRetired &&
 				((nbrAtLabel(0)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._followingBondedNbr)) || 
 					(nbrAtLabel(0)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._precedingBondedNbr)))) {
-				qDebug() << "corner node, SW and E, " << _name << endl;
+				//qDebug() << "corner node, SW and E, " << _name << endl;
                 zigzag(1);
                 zigzag(0);
                 if (hasNbrAtLabel(_followingBondedNbr))
@@ -254,10 +259,10 @@ void Caterpillar3Particle::activate() {
 				hasNbrAtLabel(5) && nbrAtLabel(5)._state == State::SemiRetired &&
 				((nbrAtLabel(5)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(5), nbrAtLabel(5)._followingBondedNbr)) || 
 					(nbrAtLabel(5)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(5), nbrAtLabel(5)._precedingBondedNbr)))) {
-				qDebug() << "corner node, SW and SE, " << _name << endl;
+				//qDebug() << "corner node, SW and SE, " << _name << endl;
 
                 zigzag(0);
-				qDebug() << "Sending p10" << endl;
+				//qDebug() << "Sending p10" << endl;
                 if (hasNbrAtLabel(_precedingBondedNbr))
                     nbrAtLabel(_precedingBondedNbr)._receive_msg = 4; //p10
             }
@@ -268,11 +273,11 @@ void Caterpillar3Particle::activate() {
 				hasNbrAtLabel(0) && nbrAtLabel(0)._state == State::SemiRetired &&
 				((nbrAtLabel(0)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._followingBondedNbr)) || 
 					(nbrAtLabel(0)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._precedingBondedNbr)))) {
-				qDebug() << "corner node, NE and E, " << _name << endl;
+				//qDebug() << "corner node, NE and E, " << _name << endl;
 
 				zigzag(5);
 				if (_followingBondedNbr!=-1) {
-					qDebug() << "sending ack to _followingBondedNbr: " << _followingBondedNbr << ", hasNbrAtLabel(_followingBondedNbr):" << hasNbrAtLabel(_followingBondedNbr) << endl;
+					//qDebug() << "sending ack to _followingBondedNbr: " << _followingBondedNbr << ", hasNbrAtLabel(_followingBondedNbr):" << hasNbrAtLabel(_followingBondedNbr) << endl;
 					nbrAtLabel(_followingBondedNbr)._receive_msg = 1; //Ack
 					//qDebug() << "nbrAtLabel(_followingBondedNbr)._receive_msg: " << nbrAtLabel(_followingBondedNbr)._receive_msg << endl;
 					//qDebug() << "nbrAtLabel(_followingBondedNbr)._name: " << nbrAtLabel(_followingBondedNbr)._name << endl;
@@ -288,10 +293,10 @@ void Caterpillar3Particle::activate() {
 				hasNbrAtLabel(5) && nbrAtLabel(5)._state == State::SemiRetired &&
 				((nbrAtLabel(5)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(5), nbrAtLabel(5)._followingBondedNbr)) || 
 					(nbrAtLabel(5)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(5), nbrAtLabel(5)._precedingBondedNbr)))) {
-				qDebug() << "non-corner node, SW and SE, " << _name << endl;
+				//qDebug() << "non-corner node, SW and SE, " << _name << endl;
 
 				zigzag(0);
-				qDebug() << "Sending p10p1" << endl;
+				//qDebug() << "Sending p10p1" << endl;
 
                 if (hasNbrAtLabel(_precedingBondedNbr))
                     nbrAtLabel(_precedingBondedNbr)._receive_msg = 5; //p10p1
@@ -304,10 +309,10 @@ void Caterpillar3Particle::activate() {
 				((nbrAtLabel(0)._followingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._followingBondedNbr)) || 
 					(nbrAtLabel(0)._precedingBondedNbr!=-1 && pointsAtMe(nbrAtLabel(0), nbrAtLabel(0)._precedingBondedNbr))))
 			{
-				qDebug() << "non-corner node, NE and E, " << _name << endl;
+				//qDebug() << "non-corner node, NE and E, " << _name << endl;
 
 				zigzag(5);
-				qDebug() << "Sending p4" << endl;
+				//qDebug() << "Sending p4" << endl;
 
                 if (hasNbrAtLabel(_precedingBondedNbr))
                     nbrAtLabel(_precedingBondedNbr)._receive_msg = 7; //p4
@@ -319,10 +324,10 @@ void Caterpillar3Particle::activate() {
 				((nbrAtLabel(4)._followingBondedNbr != -1 && pointsAtMe(nbrAtLabel(4), nbrAtLabel(4)._followingBondedNbr)) ||
 				(nbrAtLabel(4)._precedingBondedNbr != -1 && pointsAtMe(nbrAtLabel(4), nbrAtLabel(4)._precedingBondedNbr))))
 			{
-				qDebug() << "non-corner node, W and SW, " << _name << endl;
+				//qDebug() << "non-corner node, W and SW, " << _name << endl;
 
 				//zigzag(5);
-				qDebug() << "Sending p10" << endl;
+				//qDebug() << "Sending p10" << endl;
 
 				if (hasNbrAtLabel(_precedingBondedNbr))
 					nbrAtLabel(_precedingBondedNbr)._receive_msg = 4; //p4
@@ -330,7 +335,7 @@ void Caterpillar3Particle::activate() {
 			else {
 				if (hasNbrAtLabel(_followingBondedNbr)) {
 					nbrAtLabel(_followingBondedNbr)._receive_msg = 1; //Ack
-					qDebug() << "Sending Ack from " << _name << endl;
+					//qDebug() << "Sending Ack from " << _name << endl;
 				}
 				_state = State::Follower;
 				_color = getColor(_state);
@@ -360,6 +365,7 @@ void Caterpillar3Particle::activate() {
     //--------------------- TERMINATED STATE ---------------------
     else if (_state == State::Terminated && initialization==-1) {
     _color = getColor(_state);
+	_receive_msg = -1;
     }
 
 }
