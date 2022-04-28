@@ -40,12 +40,13 @@ void Caterpillar2Particle::activate() {
 		_firstNode2.push_back({ first_node_to_insert2[0], first_node_to_insert2[1], 3 });
 		if (hasNbrAtLabel(_precedingBondedNbr)) {
 
-			nbrAtLabel(_precedingBondedNbr)._receive_head = 0; //root activation
+			nbrAtLabel(_precedingBondedNbr)._receive_msg = 0; //root activation
 		}
 
-		if (_receive_tail == 0){ //receives terminate{
+		if (_receive_msg == 1){ //receives terminate{
 			_state = State::Terminated;
 			_color = getColor(_state);
+			_receive_msg = -1;
 		}
 
 	}
@@ -68,10 +69,8 @@ void Caterpillar2Particle::activate() {
 		if (isPointedByFirstNode(_firstNode2, head.x, head.y) == -1 && isPointedByNextNode(_nextNodes2, head.x, head.y) == 0) {
 			qDebug() << "1" << endl;
 			if (isPointedByFirstNode(_firstNode2, head.x, head.y) == -1 && isPointedByNextNode(_nextNodes2, head.x, head.y) == 0) {
-				//qDebug() << "1" << endl;
 
 				rotate();
-				//qDebug() << "1" << endl;
 
 			}
 		}
@@ -93,21 +92,16 @@ void Caterpillar2Particle::activate() {
 				_nextNodes2.push_back({ next_node_to_insert2[0], next_node_to_insert2[1], 5 });
 			}
 			else if (isPointedByNextNode(_nextNodes2, head.x, head.y) >= 2) {
-				//_firstNode2.clear();
 				first_node_to_insert2 = getNodeFromLabel(head.x, head.y, 3);
 				_firstNode2.push_back({ first_node_to_insert2[0], first_node_to_insert2[1], 3 });
-				//_firstNode2.push_back({ (layer2 + 1) % 4, head.x, head.y, 3 });
 				layer2 = (layer2 + 1) % 4;
 			}
 			else if (isPointedByNextNode(_nextNodes2, head.x, head.y) == 1) {
 				for (int label = 0; label <= 5; label++) {
 
-					//qDebug() << "Label = " << label << endl;
-					//qDebug() << "hasNbrAtLabel(label): " << hasNbrAtLabel(label) << endl;
 					if (label == _precedingBondedNbr) {
 						int a = (label + 1) % 6;
 						int b = label == 0 ? 5 : label - 1;
-						//qDebug() << "a, b = " << a << ", " << b << endl;
 						if ((hasNbrAtLabel(a) && (nbrAtLabel(a)._state == State::Retired || nbrAtLabel(a)._state == State::Leader) && a != _followingBondedNbr) || (hasNbrAtLabel(b) && (nbrAtLabel(b)._state == State::Retired || nbrAtLabel(b)._state == State::Leader) && b != _followingBondedNbr)) {
 							next_node_to_insert2 = getNodeFromLabel(head.x, head.y, label);
 							_nextNodes2.push_back({ next_node_to_insert2[0], next_node_to_insert2[1], label });
@@ -118,7 +112,6 @@ void Caterpillar2Particle::activate() {
 					if (!hasNbrAtLabel(label) && _precedingBondedNbr != -1) {
 						int a = (label + 1) % 6;
 						int b = label == 0 ? 5 : label - 1;
-						//qDebug() << "a, b = " << a << ", " << b << endl;
 						if ((hasNbrAtLabel(a) && (nbrAtLabel(a)._state == State::Retired || nbrAtLabel(a)._state == State::Leader) && a != _followingBondedNbr) || (hasNbrAtLabel(b) && (nbrAtLabel(b)._state == State::Retired || nbrAtLabel(b)._state == State::Leader) && b != _followingBondedNbr)) {
 							next_node_to_insert2 = getNodeFromLabel(head.x, head.y, label);
 							_nextNodes2.push_back({ next_node_to_insert2[0], next_node_to_insert2[1], label });
@@ -130,9 +123,7 @@ void Caterpillar2Particle::activate() {
 
 			//Forward root activation to preceding bonded nbr
 			if (_precedingBondedNbr != -1 && hasNbrAtLabel(_precedingBondedNbr)) {
-				//qDebug() << "----------root - forwarding root activation to preceding nbr" << endl;
-				nbrAtLabel(_precedingBondedNbr)._receive_head = 0;
-				//nbrAtLabel(_precedingBondedNbr)._state = State::Root;
+				nbrAtLabel(_precedingBondedNbr)._receive_msg = 0;
 			}
 			_state = State::Retired;
 			_color = getColor(_state);
@@ -144,7 +135,8 @@ void Caterpillar2Particle::activate() {
 	//--------------------- FOLLOWER STATE ---------------------
 	else if (_state == State::Follower) {
 		_color = getColor(_state);
-		if (_receive_head == 0) {
+		if (_receive_msg == 0) {
+			_receive_msg = -1;
 			qDebug() << "Follower " << _name << " becoming root" << endl;
 			_state = State::Root;
 			_color = getColor(_state);
@@ -154,19 +146,16 @@ void Caterpillar2Particle::activate() {
 	//--------------------- RETIRED STATE ---------------------
 	else if (_state == State::Retired) {
 		_color = getColor(_state);
-		//qDebug() << "Retired state = " << _name << endl;
-		//qDebug() << "_precedingBondedNbr == -1: " << (_precedingBondedNbr == -1) << " (_followingBondedNbr): " << _followingBondedNbr << endl;
 		if (_precedingBondedNbr == -1 && hasNbrAtLabel(_followingBondedNbr)) {
-			//qDebug() << "Tail particle retired, sending terminate" << endl;
-			nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
+			nbrAtLabel(_followingBondedNbr)._receive_msg = 1; //terminate
 			_state = State::Terminated;
 			_color = getColor(_state);
 		}
 
-		if (_receive_tail == 0) {
-			//qDebug() << "Received termination, forwarding to following bonded nbr" << endl;
+		if (_receive_msg == 1) {
+			_receive_msg = -1;
 			if (hasNbrAtLabel(_followingBondedNbr)) {
-				nbrAtLabel(_followingBondedNbr)._receive_tail = 0; //terminate
+				nbrAtLabel(_followingBondedNbr)._receive_msg = 1; //terminate
 				
 			}
 			_state = State::Terminated;
@@ -179,7 +168,6 @@ void Caterpillar2Particle::activate() {
 		_firstNode2.clear();
 		_nextNodes2.clear();
 		_color = getColor(_state);
-		//qDebug() << "Terminated state = " << _name << endl;
 	}
 
 }
@@ -290,9 +278,6 @@ int Caterpillar2Particle::isPointedByFirstNode(std::vector<std::vector<int>> fir
 		if (firstNode[i][0] == x && firstNode[i][1] == y)
 			return firstNode[i][2];
 	}
-	
-
-
 
 
 	return -1;
@@ -311,26 +296,17 @@ int Caterpillar2Particle::isPointedByNextNode(std::vector<std::vector<int>> next
 }
 
 //Rotate function
-//return values: (-1) - ack (not pointed), 1 - completed for next1, 2 - completed for next2
 //
 void Caterpillar2Particle::rotate() {
 
 	int expandDir = (_followingBondedNbr + 1) % 6;
-	//qDebug() << "_followingBondedNbr:" << _followingBondedNbr << endl;
 	int _new_dir = getLabelFromNode(nbrAtLabel(_followingBondedNbr).head.x, nbrAtLabel(_followingBondedNbr).head.y, getNodeFromLabel(head.x, head.y, expandDir)[0], getNodeFromLabel(head.x, head.y, expandDir)[1]);
-	//qDebug() << "new dir after = " << _new_dir << endl;
-	//nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir;
 	vector<int> nbrNode = getNodeFromLabel(head.x, head.y, expandDir);
 	qDebug() << "nbrNode:" << nbrNode<<endl;
-	//qDebug() << "new dir = " << _new_dir << endl;
-	//int new_dir_1 = getLabelFromNode();
 	vector<int> pBN;
-	//qDebug() << "prec bonded nbr = " << _precedingBondedNbr << endl;
 	if (_precedingBondedNbr != -1 && hasNbrAtLabel(_precedingBondedNbr))
 		pBN = { nbrAtLabel(_precedingBondedNbr).head.x, nbrAtLabel(_precedingBondedNbr).head.y };
-	//qDebug() << "pbn =  " << pBN << endl;
-	//qDebug() << "nbrNode:" << nbrNode;endl;
-
+	
 	if (canExpand(expandDir))
 		expand(expandDir);
 
@@ -349,55 +325,39 @@ void Caterpillar2Particle::rotate() {
 		//If it is not the last particle
 		else {
 			//If the transition doesnot change the connectivity
-			//qDebug() << "check if node is nbr = " << checkIfNodeIsNbr(pBN[0], pBN[1], nbrNode[0], nbrNode[1]) << endl;
-			//qDebug() << "checkIfNodeIsNbr:" << checkIfNodeIsNbr(pBN[0], pBN[1], nbrNode[0], nbrNode[1]) << endl;
-
+			
 			if (checkIfNodeIsNbr(pBN[0], pBN[1], nbrNode[0], nbrNode[1])) { //if prec bonded nbr is a neighbor to new expanded position
-				//qDebug() << "No need to pull at " << _name << endl;
 				if (isExpanded())
 					contractTail();
 				if (hasNbrAtLabel(_followingBondedNbr))
 					nbrAtLabel(_followingBondedNbr)._precedingBondedNbr = _new_dir; //right particle pBN changes
-				//qDebug() << "getLabelFromNode(head.x, head.y, pBN[0], pBN[1]) " << getLabelFromNode(head.x, head.y, pBN[0], pBN[1]) << endl;
-				//qDebug() << "head.x, head.y = " << head.x << " " << head.y << endl;
-
+				
 				_precedingBondedNbr = getLabelFromNode(head.x, head.y, pBN[0], pBN[1]);
-				//qDebug() << "_precedingBondedNbr " << _precedingBondedNbr << endl;
 
 				nbrAtLabel(_precedingBondedNbr)._followingBondedNbr = (_precedingBondedNbr + 3) % 6;
 				_followingBondedNbr = (_new_dir + 3) % 6;
-				//qDebug() << "_followingBondedNbr " << _followingBondedNbr << endl;
 
 			}
 			else {
 
-				//------------------------------------------------------------------------------
-			//START FROM HERE
-				//qDebug() << "Pull mechanism starts at " << _name << endl;
 				vector<int> tailNode = getNodeFromLabel(head.x, head.y, tailDir());
 				vector<int> pBN;
 				vector<int> fBN;
 				if (_precedingBondedNbr != -1) {
 
 					pBN = getNodeFromLabel(tailNode[0], tailNode[1], _precedingBondedNbr);
-					//qDebug() << "pbn = " << pBN << endl;
 				}
 				if (_followingBondedNbr != -1) {
 					fBN = getNodeFromLabel(head.x, head.y, _followingBondedNbr);
-					//qDebug() << "fbn = " << fBN << endl;
 
 				}
 				
 
 
 				for (int label : tailLabels()) {
-					//qDebug() << "label = " << label << endl;
-					//qDebug() << "_precedingBondedNbr = " << _precedingBondedNbr << endl;
 					if (hasNbrAtLabel(label))
-						//qDebug() << "nbrAtLabel(label)._followingBondedNbr = " << nbrAtLabel(label)._followingBondedNbr << endl;
-
+					
 						if (hasNbrAtLabel(label) && nbrAtLabel(label)._followingBondedNbr == (_precedingBondedNbr + 3) % 6) {
-							//qDebug() << "can pull this label: " << canPull(label) << endl;
 							if (canPull(label)) {
 								_precedingBondedNbr = tailDir();
 								pull(label);
@@ -405,11 +365,7 @@ void Caterpillar2Particle::rotate() {
 							}
 						}
 				}
-				//_precedingBondedNbr = tailDir();
-				//qDebug() << "prec bonded nbr becomes " << _precedingBondedNbr << endl;
-
-
-
+				
 
 				nbrAtLabel(_precedingBondedNbr)._followingBondedNbr = (_precedingBondedNbr + 3) % 6;
 				if (hasNbrAtLabel(_followingBondedNbr)) {
@@ -419,13 +375,10 @@ void Caterpillar2Particle::rotate() {
 				Caterpillar2Particle *temp = &nbrAtLabel(_precedingBondedNbr);
 
 				while ((temp->_precedingBondedNbr) != -1) {
-					//qDebug() << "Pulling continues at " << temp->_name << endl;
 					vector<int> tailNode = temp->getNodeFromLabel(temp->head.x, temp->head.y, temp->tailDir());
 					vector<int> pBN = temp->getNodeFromLabel(tailNode[0], tailNode[1], temp->_precedingBondedNbr);
 					vector<int> fBN = temp->getNodeFromLabel(temp->head.x, temp->head.y, temp->_followingBondedNbr);
 					
-
-
 					if (checkIfNodeIsNbr(temp->head.x, temp->head.y, pBN[0], pBN[1])) { //if prec bonded nbr is a neighbor to new expanded position
 						temp->contractTail();
 						temp->_followingBondedNbr = getLabelFromNode(temp->head.x, temp->head.y, fBN[0], fBN[1]);
@@ -435,16 +388,11 @@ void Caterpillar2Particle::rotate() {
 						temp->nbrAtLabel(temp->_precedingBondedNbr)._followingBondedNbr = (temp->_precedingBondedNbr + 3) % 6;
 					}
 					else {
-						//temp->nbrAtLabel(temp->_precedingBondedNbr)._followingBondedNbr = (temp->tailDir() + 3) % 6;
 
 						for (int label : temp->tailLabels()) {
-							//qDebug() << "label = " << label << endl;
-							//qDebug() << "_precedingBondedNbr = " << temp->_precedingBondedNbr << endl;
 							if (temp->hasNbrAtLabel(label))
-								//qDebug() << "nbrAtLabel(label)._followingBondedNbr = " << temp->nbrAtLabel(label)._followingBondedNbr << " at " << temp->_name << endl;
-
+							
 								if (temp->hasNbrAtLabel(label) && temp->nbrAtLabel(label)._followingBondedNbr == (temp->_precedingBondedNbr + 3) % 6) {
-									//qDebug() << "can pull this label: " << temp->canPull(label) << ", tail dir is " << temp->tailDir() << endl;
 									if (temp->canPull(label)) {
 										temp->_precedingBondedNbr = temp->tailDir();
 										temp->pull(label);
@@ -455,7 +403,6 @@ void Caterpillar2Particle::rotate() {
 
 						
 						temp->_followingBondedNbr = getLabelFromNode(temp->head.x, temp->head.y, fBN[0], fBN[1]);
-						//qDebug() << "fBN label becomes = " << temp->_followingBondedNbr << " at " << temp->_name << endl;
 
 						if (temp->hasNbrAtLabel(temp->_followingBondedNbr)) {
 
@@ -466,12 +413,9 @@ void Caterpillar2Particle::rotate() {
 
 						temp = &temp->nbrAtLabel(temp->_precedingBondedNbr);
 
-
-						
 					}
 
 				}
-				//qDebug() << "Pull stops at " << temp->_name << endl;
 				if (temp->isExpanded()) {
 					temp->contractTail();
 				}
@@ -524,7 +468,6 @@ Caterpillar2Particle& Caterpillar2Particle::nbrAtLabel(int label) const {
 
 
 Caterpillar2Particle::Color Caterpillar2Particle::getColor(Caterpillar2Particle::State state) const {
-	// Randomly select an integer and return the corresponding color via casting.
 	if (state == State::Leader)
 		return static_cast<Color>(0);
 	else if (state == State::Root)
@@ -556,21 +499,15 @@ Caterpillar2System::Caterpillar2System(unsigned int numParticles) {
 	insert(leader);
 	leader->_followingBondedNbr = -1;
 	leader->_precedingBondedNbr = 3;
-	leader->_receive_head = -1;
-	leader->_receive_tail = -1;
-	leader->_rotate_status_head = -1;
-	leader->_rotate_status_tail = -1;
+	leader->_receive_msg = -1;
+	
 	leader->_name = nameOfParticle;
 	nameOfParticle++;
-	//leader->_color = BallroomDemoParticle::Color BallroomDemoParticle::getLeaderColor();
 	Node prev = leaderNode;
 	occupied.insert(leaderNode);
 	while (numParticlesAdded < numParticles) {
-		// Choose an (x,y) position within the rhombus for the Leader and a random
-		// adjacent node for its Follower partner.
-
+		
 		int followerDir = 3;
-		//occupied.back()->_partnerTail = followerDir;
 		Node followerNode = prev.nodeInDir(followerDir);
 		Caterpillar2Particle* follower =
 			new Caterpillar2Particle(followerNode, -1, 0, *this,
@@ -582,20 +519,16 @@ Caterpillar2System::Caterpillar2System(unsigned int numParticles) {
 			follower->_precedingBondedNbr = -1;
 			insert(follower);
 			occupied.insert(followerNode);
-			follower->_receive_head = -1;
-			follower->_receive_tail = -1;
-			follower->_rotate_status_head = -1;
-			follower->_rotate_status_tail = -1;
+			follower->_receive_msg = -1;
+		
 			break;
 		}
 		else {
 			follower->_precedingBondedNbr = 3;
 		}
 		insert(follower);
-		follower->_receive_head = -1;
-		follower->_receive_tail = -1;
-		follower->_rotate_status_head = -1;
-		follower->_rotate_status_tail = -1;
+		follower->_receive_msg = -1;
+		
 		occupied.insert(followerNode);
 		prev = followerNode;
 		numParticlesAdded++;

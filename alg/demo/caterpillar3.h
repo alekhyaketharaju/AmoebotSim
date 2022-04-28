@@ -66,8 +66,7 @@ class Caterpillar3Particle : public AmoebotParticle {
         int Caterpillar3Particle::getLabelFromNode(int x_current, int y_current, int x_pre, int y_pre) const;
 
     protected:
-        // Returns a random Color.
-        Color getRandColor() const;
+        
 
         Color getColor(State state) const;
         void zigzag(int _dir);
@@ -80,7 +79,6 @@ class Caterpillar3Particle : public AmoebotParticle {
         int _name;
         int _followingBondedNbr;
         int _precedingBondedNbr;
-        int _sender; //nbr who sent the msg
         int _receive_msg; //-1 = initially (do nothing), 0 = terminate, 1 = Acknowledgement, 2 = Completed, 3 = round_anymore?,
                                                                             //4 = p10, 5 = p10p1, 6 = p1, 7 = p4,
 
@@ -92,8 +90,6 @@ class Caterpillar3System : public AmoebotSystem {
 
     public:
 
-        // Constructs a system of the specified number of BallroomDemoParticles in
-        // "dance partner" pairs enclosed by a rhombic ring of objects.
         Caterpillar3System(unsigned int numParticles = 30);
 };
 

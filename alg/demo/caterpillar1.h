@@ -87,8 +87,6 @@ class Caterpillar1System : public AmoebotSystem {
 
 	public:
 		
-		// Constructs a system of the specified number of BallroomDemoParticles in
-		// "dance partner" pairs enclosed by a rhombic ring of objects.
 		Caterpillar1System(unsigned int numParticles = 30);
 };
 

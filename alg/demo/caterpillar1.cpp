@@ -330,7 +330,7 @@ void Caterpillar1Particle::rotate() {
 				if (temp->hasNbrAtLabel(temp->_precedingBondedNbr))
 					temp = &(temp->nbrAtLabel(temp->_precedingBondedNbr));
 			}
-			temp->_receive_msg = 1; //rotate status is rotate
+			temp->_receive_msg = 1; // rotate
 			temp->rotate();
 			
 		}
@@ -485,7 +485,6 @@ void Caterpillar1Particle::rotate() {
 					}
 				
 }
-				
 
 				if (isPointedByNextNode(_nextNodes, head.x, head.y) != 0 || isPointedByNextNode(_directionNodes, head.x, head.y) != 0) {
 					
@@ -707,7 +706,6 @@ Caterpillar1Particle& Caterpillar1Particle::nbrAtLabel(int label) const {
 
 
 Caterpillar1Particle::Color Caterpillar1Particle::getColor(Caterpillar1Particle::State state) const {
-	// Randomly select an integer and return the corresponding color via casting.
 	if(state == State::Leader)
 		return static_cast<Color>(0);
 	else if (state == State::Root)
@@ -741,17 +739,13 @@ Caterpillar1System::Caterpillar1System(unsigned int numParticles) {
 	leader->_followingBondedNbr = -1;
 	leader->_precedingBondedNbr = 3;
 	leader->_receive_msg = -1;
-	leader->_receive_msg = -1;
-	leader->_receive_msg = -1;
-	leader->_receive_msg = -1;
+	
 	leader->_name = nameOfParticle;
 	nameOfParticle++;
 	Node prev = leaderNode;
 	occupied.insert(leaderNode);
 	while (numParticlesAdded < numParticles) {
-		// Choose an (x,y) position within the rhombus for the Leader and a random
-		// adjacent node for its Follower partner.
-
+		
 		int followerDir = 3;
 		Node followerNode = prev.nodeInDir(followerDir);
 		Caterpillar1Particle* follower =
@@ -765,9 +759,7 @@ Caterpillar1System::Caterpillar1System(unsigned int numParticles) {
 			insert(follower);
 			occupied.insert(followerNode);
 			follower->_receive_msg = -1;
-			follower->_receive_msg = -1;
-			follower->_receive_msg = -1;
-			follower->_receive_msg = -1;
+			
 			break;
 		}
 		else {
@@ -775,9 +767,7 @@ Caterpillar1System::Caterpillar1System(unsigned int numParticles) {
 		}
 		insert(follower);
 		follower->_receive_msg = -1;
-		follower->_receive_msg = -1;
-		follower->_receive_msg = -1;
-		follower->_receive_msg = -1;
+		
 		occupied.insert(followerNode);
 		prev = followerNode;
 		numParticlesAdded++;

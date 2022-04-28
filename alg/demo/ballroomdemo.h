@@ -1,3 +1,13 @@
+/* Copyright (C) 2021 Joshua J. Daymude, Robert Gmyr, and Kristian Hinnenthal.
+ * The full GNU GPLv3 can be found in the LICENSE file, and the full copyright
+ * notice can be found at the top of main/main.cpp. */
+
+ // Defines the particle system and composing particles for the Ballroom code
+ // tutorial, demonstrating inter-particle coordination. This tutorial covers
+ // read/write functionality and pull/push handovers. The pseudocode is
+ // available in the docs:
+ // [https://amoebotsim.rtfd.io/en/latest/tutorials/tutorials.html#ballroomdemo-working-together].
+
 #ifndef AMOEBOTSIM_ALG_DEMO_BALLROOMDEMO_H_
 #define AMOEBOTSIM_ALG_DEMO_BALLROOMDEMO_H_
 
@@ -15,8 +25,12 @@ public:
 
 	enum class Color {
 		Red,
+		Orange,
+		Yellow,
 		Green,
-		Blue
+		Blue,
+		Indigo,
+		Violet
 	};
 
 	// Constructs a new particle with a node position for its head, a global
@@ -51,13 +65,11 @@ public:
 protected:
 	// Returns a random Color.
 	Color getRandColor() const;
-	Color getLeaderColor() const;
 
 	// Member variables.
 	const State _state;
 	Color _color;
-	int _partnerHead;
-	int _partnerTail; //added new
+	int _partnerLbl;
 
 private:
 	friend class BallroomDemoSystem;

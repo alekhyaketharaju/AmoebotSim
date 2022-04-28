@@ -62,7 +62,6 @@ public:
 	int getLabelFromNode(int x_current, int y_current, int x_pre, int y_pre) const;
 
 protected:
-	// Returns a random Color.
 	
 	Color getColor(State state) const;
 	void rotate();
@@ -71,15 +70,9 @@ protected:
 	State _state;
 	Color _color;
 	int _name;
-	//int layer2 = 1;
 	int _followingBondedNbr;
 	int _precedingBondedNbr;
-	int _rotate_status_head; //-1 - do nothing, 1 - init rotate, 2 - Ack, 3 - Completed rotate
-	int _rotate_status_tail;
-	
-	int _receive_head; 
-
-	int _receive_tail; 
+	int _receive_msg; // Initially = -1, Root activation = 0, Terminate = 1
 private:
 	friend class Caterpillar2System;
 };
@@ -88,8 +81,6 @@ class Caterpillar2System : public AmoebotSystem {
 
 public:
 
-	// Constructs a system of the specified number of BallroomDemoParticles in
-	// "dance partner" pairs enclosed by a rhombic ring of objects.
 	Caterpillar2System(unsigned int numParticles = 30);
 };
 
